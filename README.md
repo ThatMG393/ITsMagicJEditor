@@ -1,2 +1,2 @@
 # ITsMagicJEditor
-CustomITsMagic Java Editor
+Custom ITsMagic Java Editor
