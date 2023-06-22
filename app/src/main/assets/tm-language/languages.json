@@ -1,0 +1,10 @@
+{
+  "languages": [
+		{
+			"grammar": "tm-language/java/syntaxes/java.tmLanguage.json",
+			"name": "java",
+			"scopeName": "source.java",
+			"languageConfiguration": "tm-language/java/language-configuration.json"
+		}
+	]
+}

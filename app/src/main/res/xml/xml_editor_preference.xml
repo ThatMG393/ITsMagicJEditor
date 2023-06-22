@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+	
+    <androidx.preference.SwitchPreference
+        android:defaultValue="false"
+        android:key="editor_wordwrap"
+        android:summary="Wraps text outside of the screen"
+        android:title="Word Wrap" />
+		
+</androidx.preference.PreferenceScreen>
