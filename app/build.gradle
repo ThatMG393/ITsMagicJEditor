@@ -11,8 +11,8 @@ android {
         applicationId "com.itsmagic.code.jeditor"
         minSdk 21
         targetSdk 33
-        versionCode 514
-        versionName "ST.2023.06f1" // We need to match the ITsMagic app version
+        versionCode 526
+        versionName "ST.2023.06f7" // We need to match the ITsMagic app version
     }
 
     buildTypes {

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ITsMagic Editor</string>
+	<string name="open_navigation_view">Open Navigation View</string>
+	<string name="close_navigation_view">Close Navigation View</string>
 </resources>
