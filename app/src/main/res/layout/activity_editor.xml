@@ -36,12 +36,25 @@
     </RelativeLayout>
 	
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/editor_navigationView"
+        android:id="@+id/editor_navigationViewLeft"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="?attr/colorPrimary"
+        android:fitsSystemWindows="true" />
+	
+	<com.google.android.material.navigation.NavigationView
+        android:id="@+id/editor_navigationViewRight"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="?attr/colorPrimary"
         android:fitsSystemWindows="true">
+		
+		<FrameLayout
+            android:id="@+id/editor_treeViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </com.google.android.material.navigation.NavigationView>
 

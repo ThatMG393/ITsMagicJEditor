@@ -18,6 +18,7 @@ import com.itsmagic.code.jeditor.models.ProjectModel;
 import com.itsmagic.code.jeditor.utils.SharedPreferenceUtils;
 import com.itsmagic.code.jeditor.utils.StorageUtils;
 
+import com.itsmagic.code.jeditor.utils.UriUtils;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -41,15 +42,14 @@ public class MainActivity extends AppCompatActivity {
 							final ArrayAdapter<String> projectsAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_item);
 							final ArrayList<ProjectModel> projectsList = new ArrayList<ProjectModel>();
 							
-							DocumentFile fromTreeUri = DocumentFile.fromTreeUri(getApplicationContext(), Uri.parse(path.toString() + "%2Ffiles%2FITsMagic%2FProjects"));
-							DocumentFile[] documentFiles = fromTreeUri.listFiles();
+							DocumentFile[] documentFiles = UriUtils.listFileTree(getApplicationContext(), Uri.parse(path.toString() + "%2Ffiles%2FITsMagic%2FProjects"));
 							
 							for (int i = 1; i < documentFiles.length; i++) {
 								File projectDir = new File(DocumentFileUtils.getAbsolutePath(documentFiles[i], MainActivity.this));
 								
 								projectsAdapter.add(projectDir.getName());
 								projectsList.add(new ProjectModel(
-									projectDir.getAbsolutePath(),
+									documentFiles[i].getUri().toString(),
 									projectDir.getName()
 								));
 							}

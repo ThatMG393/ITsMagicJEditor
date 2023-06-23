@@ -1,6 +1,7 @@
 package com.itsmagic.code.jeditor.utils;
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.provider.OpenableColumns;
 import android.net.Uri;
@@ -22,12 +23,11 @@ public class StorageUtils {
 	}
 	
 	public static void askForDirectoryAccess(@NotNull AppCompatActivity activity, @NotNull String path, @NotNull int requestCode, @NotNull OnAllowFolderAccess listener) {
-		
 		storageHelper.setOnStorageAccessGranted((rCode, root) -> {
 			String absolutePath = DocumentFileUtils.getAbsolutePath(root, activity);
 			listener.onAllowFolderAccess(rCode, root);
 			SharedPreferenceUtils.getInstance().putBool(absolutePath, true);
-
+			
 			// Toast.makeText(context, "Access granted for folder: " + absolutePath, Toast.LENGTH_LONG).show();
 			return null;
 		});
@@ -41,7 +41,7 @@ public class StorageUtils {
 				requestCode,
 				fullPath,
 				StorageType.EXTERNAL,
-				 path
+				path
 			);
 		} else {
 			listener.onAllowFolderAccess(requestCode, fullPath.toDocumentUri(activity));

@@ -52,7 +52,7 @@ public class TabEditorAdapter extends FragmentStateAdapter {
 		if (tabLayout.getTabCount() == 0 && tabLayout.getVisibility() == View.VISIBLE) {
 			tabLayout.animate()
 				.translationY(-tabLayout.getHeight())
-				.setDuration(500)
+				.setDuration(200)
 				.setInterpolator(new AccelerateDecelerateInterpolator())
 				.setListener(new AnimatorListenerAdapter() {
 					@Override
@@ -67,9 +67,8 @@ public class TabEditorAdapter extends FragmentStateAdapter {
 			System.out.println("WGAT");
 			
 			tabLayout.setVisibility(View.VISIBLE);
-			// tabLayout.setAlpha(0.0f);
 			tabLayout.animate()
-				.setDuration(1000)
+				.setDuration(200)
 				.setInterpolator(new AccelerateDecelerateInterpolator())
 				.translationY(0)
 				.setListener(null);

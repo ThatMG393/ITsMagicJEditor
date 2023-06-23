@@ -31,8 +31,11 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
 	implementation 'androidx.preference:preference:1.2.0'
+	
 	implementation "com.anggrayudi:storage:1.5.4"
 	implementation 'com.google.android.material:material:1.9.0'
+	
+	implementation 'io.github.amrdeveloper:treeview:1.1.4'
 	implementation(platform("io.github.Rosemoe.sora-editor:bom:0.21.1"))
     implementation("io.github.Rosemoe.sora-editor:editor")
 	implementation("io.github.Rosemoe.sora-editor:language-textmate")
