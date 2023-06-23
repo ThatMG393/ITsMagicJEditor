@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
 							
 							for (int i = 1; i < documentFiles.length; i++) {
 								File projectDir = new File(DocumentFileUtils.getAbsolutePath(documentFiles[i], MainActivity.this));
+								if (projectDir.getName().toLowerCase().contains("_editor")) {
+                                    continue;
+                                }
 								
 								projectsAdapter.add(projectDir.getName());
 								projectsList.add(new ProjectModel(
