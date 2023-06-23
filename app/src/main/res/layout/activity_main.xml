@@ -1,29 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-	 xmlns:android="http://schemas.android.com/apk/res/android"
-	 xmlns:app="http://schemas.android.com/apk/res-auto"
-	 xmlns:tools="http://schemas.android.com/tools"
-	 android:layout_height="match_parent"
-	 android:layout_width="match_parent"
-	 tools:context=".MainActivity">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent"
+	tools:context=".MainActivity">
+
+	<androidx.appcompat.widget.Toolbar
+		android:id="@+id/main_toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary"
+		android:elevation="2dp"
+		android:outlineProvider="none"
+		android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
 	<com.google.android.material.textview.MaterialTextView
-		 android:layout_height="wrap_content"
-		 android:layout_width="wrap_content"
-		 android:layout_centerInParent="true"
-		 android:layout_marginTop="64dp"
-		 android:layout_alignParentTop="true"
-		 android:text="@string/app_name"
-		 android:id="@+id/main_logo_text" />
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_centerInParent="true"
+		android:layout_below="@id/main_toolbar"
+		android:layout_marginTop="64dp"
+		android:layout_alignParentTop="true"
+		android:text="@string/app_name"
+		android:id="@+id/main_logo_text" />
 
 	<com.google.android.material.button.MaterialButton
-		 android:layout_height="wrap_content"
-		 android:layout_width="wrap_content"
-		 android:layout_centerInParent="true"
-		 android:layout_marginBottom="64dp"
-		 android:layout_below="@id/main_logo_text"
-		 android:text="Open Project"
-		 android:layout_marginTop="16dp"
-		 android:id="@+id/main_open_project_button" />
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_centerInParent="true"
+		android:layout_marginBottom="64dp"
+		android:layout_below="@id/main_logo_text"
+		android:layout_marginTop="16dp"
+		android:text="Open Project"
+		android:id="@+id/main_open_project_button" />
+
+	<com.google.android.material.button.MaterialButton
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_centerInParent="true"
+		android:layout_marginBottom="64dp"
+		android:layout_below="@id/main_open_project_button"
+		android:layout_marginTop="16dp"
+		android:text="Settings"
+		android:id="@+id/main_settings_button" />
 
 </RelativeLayout>

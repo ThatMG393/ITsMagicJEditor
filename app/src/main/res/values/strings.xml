@@ -1,5 +1,25 @@
 <resources>
-    <string name="app_name">ITsMagic Editor</string>
+	<string name="app_name">ITsMagic Editor</string>
 	<string name="open_navigation_view">Open Navigation View</string>
 	<string name="close_navigation_view">Close Navigation View</string>
+	
+	<string-array name="main_itsmagic_release_entry">
+		<item>Stable</item>
+		<item>Beta</item>
+	</string-array>
+	
+	<string-array name="main_itsmagic_release_value">
+		<item>Android/data/com.itsmagic.enginestable</item>
+		<item>Android/data/com.itsmagic.engine</item>
+	</string-array>
+	
+	<string-array name="editor_code_theme_entry">
+		<item>Darcula</item>
+		<item>Quitelight</item>
+	</string-array>
+	
+	<string-array name="editor_code_theme_value">
+		<item>darcula</item>
+		<item>quitelight</item>
+	</string-array>
 </resources>

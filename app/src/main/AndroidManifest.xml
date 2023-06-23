@@ -22,6 +22,8 @@
 		</activity>
 
 		<activity android:name=".EditorActivity" />
+		<activity android:name=".fragments.main.MainSettingsFragment" />
+		<activity android:name=".fragments.editor.EditorSettingsFragment" />
 
 	</application>
 

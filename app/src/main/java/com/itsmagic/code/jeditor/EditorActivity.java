@@ -2,6 +2,7 @@ package com.itsmagic.code.jeditor;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.amrdeveloper.treeview.TreeViewAdapter;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.itsmagic.code.jeditor.adapters.TabEditorAdapter;
+import com.itsmagic.code.jeditor.fragments.editor.EditorSettingsFragment;
 import com.itsmagic.code.jeditor.fragments.editor.EditorTabFragment;
 import com.itsmagic.code.jeditor.fragments.editor.EditorTreeViewFragment;
 import com.itsmagic.code.jeditor.models.ProjectModel;
@@ -130,6 +132,23 @@ public class EditorActivity extends AppCompatActivity implements NavigationView.
 		showPopupMenu(
 				((ViewGroup) tabLayout.getChildAt(0)).getChildAt(tab.getPosition()),
 				tab.getPosition());
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.editor_toolbar_menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.editor_toolbar_settings) {
+			EditorSettingsFragment.start(getApplicationContext());
+		} else {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	@Override

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent">
+
+	<androidx.preference.DropDownPreference
+		android:key="main_itsmagic_releaseType"
+		android:entryValues="@array/main_itsmagic_release_value"
+		android:entries="@array/main_itsmagic_release_entry"
+		app:iconSpaceReserved="false"
+		android:title="ITsMagic release type" />
+
+</androidx.preference.PreferenceScreen>

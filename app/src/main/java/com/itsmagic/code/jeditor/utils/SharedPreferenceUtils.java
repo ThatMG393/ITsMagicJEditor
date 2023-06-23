@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -38,7 +39,7 @@ public class SharedPreferenceUtils {
         if (INSTANCE != null) { throw new RuntimeException("Please use 'SharedPreferenceUtils#getInstance()'!"); }
 
         this.activity = activity;
-		this.SP_INSTANCE = activity.getPreferences(Context.MODE_PRIVATE);
+		this.SP_INSTANCE = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
 	}
 	
 	public final void putBool(String key, boolean state) {

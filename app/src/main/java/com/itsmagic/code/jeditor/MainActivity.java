@@ -14,6 +14,7 @@ import androidx.documentfile.provider.DocumentFile;
 import com.anggrayudi.storage.file.DocumentFileUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.itsmagic.code.jeditor.fragments.main.MainSettingsFragment;
 import com.itsmagic.code.jeditor.models.ProjectModel;
 import com.itsmagic.code.jeditor.utils.SharedPreferenceUtils;
 import com.itsmagic.code.jeditor.utils.StorageUtils;
@@ -23,13 +24,14 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-	public static final String itsMagicDataPath = "Android/data/com.itsmagic.engine";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		init();
         setContentView(R.layout.activity_main);
+		setSupportActionBar(findViewById(R.id.main_toolbar));
+		
+		String itsMagicDataPath = SharedPreferenceUtils.getInstance().getString("main_itsmagic_releaseType");
 		
 		MaterialButton openProjectButton = findViewById(R.id.main_open_project_button);
 		openProjectButton.setOnClickListener(new View.OnClickListener() {
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 							
 							for (int i = 1; i < documentFiles.length; i++) {
 								File projectDir = new File(DocumentFileUtils.getAbsolutePath(documentFiles[i], MainActivity.this));
+								
 								
 								projectsAdapter.add(projectDir.getName());
 								projectsList.add(new ProjectModel(
@@ -75,6 +78,14 @@ public class MainActivity extends AppCompatActivity {
 						}
 					}
 				);
+			}
+		});
+		
+		MaterialButton settingsButton = findViewById(R.id.main_settings_button);
+		settingsButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				MainSettingsFragment.start(getApplicationContext());
 			}
 		});
     }

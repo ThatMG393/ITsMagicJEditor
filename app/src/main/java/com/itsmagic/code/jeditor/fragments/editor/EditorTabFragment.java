@@ -13,6 +13,7 @@ import com.anggrayudi.storage.file.DocumentFileCompat;
 import com.anggrayudi.storage.file.DocumentFileType;
 import com.itsmagic.code.jeditor.utils.EditorUtils;
 
+import com.itsmagic.code.jeditor.utils.SharedPreferenceUtils;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
@@ -65,13 +66,11 @@ public class EditorTabFragment extends Fragment {
 		EditorUtils.loadTMThemes();
 		EditorUtils.ensureTMTheme(editor);
 		
-		/*
 		ThemeRegistry.getInstance().setTheme(
-			SharedPreferenceUtils.getInstance().getStringFallback("editorTheme", "quitelight")
+			SharedPreferenceUtils.getInstance().getStringFallback("editor_code_theme", "quitelight")
 		);
-		*/
 		
-		ThemeRegistry.getInstance().setTheme("darcula");
+		// ThemeRegistry.getInstance().setTheme("darcula");
 		
 		editor.setEditorLanguage(TextMateLanguage.create("source.java", true));
 		

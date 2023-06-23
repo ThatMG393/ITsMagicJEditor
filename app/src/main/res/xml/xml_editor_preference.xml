@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
-	
-    <androidx.preference.SwitchPreference
-        android:defaultValue="false"
-        android:key="editor_wordwrap"
-        android:summary="Wraps text outside of the screen"
-        android:title="Word Wrap" />
-		
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent">
+
+	<androidx.preference.SwitchPreference
+		android:defaultValue="false"
+		android:key="editor_wordwrap"
+		app:iconSpaceReserved="false"
+		android:summary="Wraps text outside of the screen"
+		android:title="Word Wrap" />
+
+	<androidx.preference.DropDownPreference
+		android:key="editor_code_theme"
+		android:entryValues="@array/editor_code_theme_value"
+		android:entries="@array/editor_code_theme_entry"
+		app:iconSpaceReserved="false"
+		android:summary="Set editor color theme"
+		android:title="Editor color scheme" />
+
 </androidx.preference.PreferenceScreen>

@@ -1,18 +1,20 @@
-package com.itsmagic.code.jeditor.fragments.editor;
+package com.itsmagic.code.jeditor.fragments.main;
 
+import android.app.Activity;
 import android.content.Context;
-import com.itsmagic.code.jeditor.fragments.main.MainSettingsFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceFragmentCompat;
 import com.itsmagic.code.jeditor.R;
 
-public class EditorSettingsFragment extends AppCompatActivity {
+public class MainSettingsFragment extends AppCompatActivity {
 	public static void start(Context context) {
-		Intent launchIntent = new Intent(context, EditorSettingsFragment.class);
+		Intent launchIntent = new Intent(context, MainSettingsFragment.class);
 		launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
+		
 		context.startActivity(launchIntent);
 	}
 
@@ -21,17 +23,17 @@ public class EditorSettingsFragment extends AppCompatActivity {
 		super.onCreate(savedInstanceBundle);
 		setContentView(R.layout.fragment_base_settings);
 		setSupportActionBar(findViewById(R.id.fragment_base_toolbar));
-
-		getSupportFragmentManager()
-				.beginTransaction()
-				.replace(R.id.fragment_base_frame, new InnerEditorSettingsFragment())
-				.commit();
+		
+   	 getSupportFragmentManager()
+			.beginTransaction()
+			.replace(R.id.fragment_base_frame, new InnerMainSettingsFragment())
+			.commit();
 	}
 
-	public static class InnerEditorSettingsFragment extends PreferenceFragmentCompat {
+	public static class InnerMainSettingsFragment extends PreferenceFragmentCompat {
 		@Override
 		public void onCreatePreferences(Bundle savedInstanceBundle, String rootKey) {
-			setPreferencesFromResource(R.xml.xml_editor_preference, rootKey);
+			setPreferencesFromResource(R.xml.xml_main_preference, rootKey);
 		}
 	}
 }
