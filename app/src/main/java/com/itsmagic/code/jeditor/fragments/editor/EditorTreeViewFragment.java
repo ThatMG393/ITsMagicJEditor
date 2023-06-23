@@ -61,7 +61,6 @@ public class EditorTreeViewFragment extends Fragment {
 		treeAdapter.setTreeNodeClickListener(new TreeViewAdapter.OnTreeNodeClickListener() {
 			@Override
 			public void onTreeNodeClick(TreeNode node, View treeView) {
-				System.out.println(node.getValue());
 				callOnNodeClickListeners(node, treeView);
 			}
 		});
