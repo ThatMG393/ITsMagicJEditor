@@ -15,6 +15,7 @@ import com.anggrayudi.storage.file.DocumentFileUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.itsmagic.code.jeditor.fragments.main.MainSettingsFragment;
+import com.itsmagic.code.jeditor.lsp.LSPManager;
 import com.itsmagic.code.jeditor.models.ProjectModel;
 import com.itsmagic.code.jeditor.utils.SharedPreferenceUtils;
 import com.itsmagic.code.jeditor.utils.StorageUtils;
@@ -96,5 +97,6 @@ public class MainActivity extends AppCompatActivity {
 	private final void init() {
 		SharedPreferenceUtils.initializeInstance(this);
 		StorageUtils.setupStorageHelper(this);
+		LSPManager.initializeInstance(this);
 	}
 }

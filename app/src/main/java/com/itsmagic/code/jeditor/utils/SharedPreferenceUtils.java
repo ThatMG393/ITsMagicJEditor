@@ -22,11 +22,7 @@ public class SharedPreferenceUtils {
 
     public static synchronized SharedPreferenceUtils initializeInstance(@NonNull AppCompatActivity activity) {
         if (INSTANCE == null) {
-			try {
-				INSTANCE = new SharedPreferenceUtils(activity);
-			} catch (Exception e) {
-				throw new RuntimeException("Failed to initialize the SharedPreference class!");
-			}
+			INSTANCE = new SharedPreferenceUtils(activity);
 		}
 		
         return INSTANCE;

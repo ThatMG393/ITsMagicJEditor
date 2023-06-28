@@ -24,7 +24,9 @@
 		<activity android:name=".EditorActivity" />
 		<activity android:name=".fragments.main.MainSettingsFragment" />
 		<activity android:name=".fragments.editor.EditorSettingsFragment" />
-
+		
+		<service android:name=".lsp.java.JavaLSPService" />
+		
 	</application>
 
 </manifest>

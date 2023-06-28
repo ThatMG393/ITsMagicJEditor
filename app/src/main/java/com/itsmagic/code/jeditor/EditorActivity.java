@@ -24,6 +24,7 @@ import com.itsmagic.code.jeditor.adapters.TabEditorAdapter;
 import com.itsmagic.code.jeditor.fragments.editor.EditorSettingsFragment;
 import com.itsmagic.code.jeditor.fragments.editor.EditorTabFragment;
 import com.itsmagic.code.jeditor.fragments.editor.EditorTreeViewFragment;
+import com.itsmagic.code.jeditor.lsp.LSPManager;
 import com.itsmagic.code.jeditor.models.ProjectModel;
 
 import java.io.File;
@@ -97,6 +98,8 @@ public class EditorActivity extends AppCompatActivity implements NavigationView.
 		viewPager.setUserInputEnabled(false);
 
 		tabLayout.setOnTabSelectedListener(this);
+		
+		LSPManager.getInstance().startLSP("java");
 	}
 
 	private void showPopupMenu(View anchor, int position) {
