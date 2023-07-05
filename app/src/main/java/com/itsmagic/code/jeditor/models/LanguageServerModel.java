@@ -5,24 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import androidx.appcompat.app.AppCompatActivity;
-import com.itsmagic.code.jeditor.activities.EditorActivity;
 import com.itsmagic.code.jeditor.lsp.LSPManager;
 import com.itsmagic.code.jeditor.lsp.base_services.BaseLSPBinder;
 import com.itsmagic.code.jeditor.lsp.base_services.BaseLSPService;
+import com.itsmagic.code.jeditor.utils.LSPUtils;
 
-import com.itsmagic.code.jeditor.lsp.java.JDTStreamProvider;
-import io.github.rosemoe.sora.lsp.client.DefaultLanguageClient;
 import io.github.rosemoe.sora.lsp.client.connection.SocketStreamConnectionProvider;
 import io.github.rosemoe.sora.lsp.client.connection.StreamConnectionProvider;
 import io.github.rosemoe.sora.lsp.client.languageserver.serverdefinition.CustomLanguageServerDefinition;
-import io.github.rosemoe.sora.lsp.client.languageserver.wrapper.EventHandler;
-
 import io.github.rosemoe.sora.lsp.client.languageserver.wrapper.LanguageServerWrapper;
+
 import java.util.ArrayList;
 
 public class LanguageServerModel implements ServiceConnection {
@@ -30,7 +25,6 @@ public class LanguageServerModel implements ServiceConnection {
 	private String languagerServerLanguage;
 	private Intent languageServerServiceIntent;
 	private int languageServerPort;
-	private CustomLanguageServerDefinition languageServerDefinition;
 	private LanguageServerWrapper languageServerWrapper;
 	
 	private boolean notInterProcessComms;
@@ -46,65 +40,56 @@ public class LanguageServerModel implements ServiceConnection {
 		this.languageServerServiceIntent = new Intent(
 			context, languageServerServiceClass
 		);
-		
 		this.languageServerPort = languageServerPort;
-		this.languageServerDefinition = new CustomLanguageServerDefinition(
-			"." + languagerServerLanguage, new CustomLanguageServerDefinition.ConnectProvider() {
-				@Override
-				public StreamConnectionProvider createConnectionProvider(String workingDir) {
-					return new SocketStreamConnectionProvider(() -> languageServerPort);
-				}
-			}
+		this.languageServerWrapper = LSPUtils.createNewServerWrapper(
+			languagerServerLanguage,
+			new SocketStreamConnectionProvider(() -> languageServerPort),
+			LSPManager.getInstance().getCurrentProject().projectPath
 		);
-		
-		this.languageServerWrapper = new LanguageServerWrapper(languageServerDefinition, LSPManager.getInstance().getCurrentProject().projectPath);
 	}
 	
 	public LanguageServerModel(
-		@NonNull AppCompatActivity activity,
 		@NonNull String languagerServerLanguage,
 		@NonNull StreamConnectionProvider lspConnectionProvider
 	) {
 		this.languagerServerLanguage = languagerServerLanguage;
-		this.languageServerDefinition = new CustomLanguageServerDefinition(
-			"." + languagerServerLanguage, new CustomLanguageServerDefinition.ConnectProvider() {
-				@Override
-				public StreamConnectionProvider createConnectionProvider(String workingDir) {
-					return lspConnectionProvider;
-				}
-			}
+		this.languageServerWrapper = LSPUtils.createNewServerWrapper(
+			languagerServerLanguage,
+			lspConnectionProvider,
+			LSPManager.getInstance().getCurrentProject().projectPath
 		);
-		
 		this.notInterProcessComms = true;
-		this.languageServerWrapper = new LanguageServerWrapper(languageServerDefinition, LSPManager.getInstance().getCurrentProject().projectPath);
 	}
 	
 	public int getLSPPort() {
-		return this.languageServerPort;
+		if (notInterProcessComms) {
+			return -1;
+		} else {
+			return this.languageServerPort;
+		}
 	}
 	
 	public CustomLanguageServerDefinition getServerDefinition() {
-		return this.languageServerDefinition;
+		return (CustomLanguageServerDefinition)this.languageServerWrapper.getServerDefinition();
 	}
 	
-	public LanguageServerWrapper getLanguageServerWrapper() {
-		return this.languageServerWrapper;
-	}
-	
-	public void startLSPService() {
+	public void startLSP() {
 		if (context == null && notInterProcessComms) {
-			return;
+			callbackOnReady(); return;
+		} else {
+			context.bindService(languageServerServiceIntent, this, Context.BIND_AUTO_CREATE);
 		}
-		context.bindService(languageServerServiceIntent, this, Context.BIND_AUTO_CREATE);
 	}
 	
-	public void stopLSPService() {
+	public void stopLSP() {
 		if (context == null && notInterProcessComms) {
-			callbackOnShutdown(); return;
+			callbackOnShutdown();
+		} else {
+			context.unbindService(this);
 		}
-		context.unbindService(this);
 	}
 	
+	// Service-based lsps
 	private BaseLSPService languageServerServiceInstance;
 	@Override
     public void onServiceConnected(ComponentName component, IBinder binder) {
@@ -121,8 +106,10 @@ public class LanguageServerModel implements ServiceConnection {
 	
 	private ArrayList<LanguageServerServiceListener> listeners = new ArrayList<>();
 	public void addListener(LanguageServerServiceListener listener) {
-		if (notInterProcessComms) listener.onServerServiceConnected();
-		if (context == null) return;
+		if (notInterProcessComms) {
+			listener.onServerServiceConnected();
+			return;
+		}
 		
 		listeners.add(listener);
 		if (languageServerServiceInstance != null) listener.onServerServiceConnected();

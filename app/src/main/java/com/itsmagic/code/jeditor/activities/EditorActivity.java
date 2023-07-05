@@ -103,8 +103,9 @@ public class EditorActivity extends BaseActivity implements NavigationView.OnNav
 		viewPager.setAdapter(tabAdapter);
 		viewPager.setUserInputEnabled(false);
 
-		tabLayout.setOnTabSelectedListener(this);
+		tabLayout.addOnTabSelectedListener(this);
 		
+		// Editor init
 		FileProviderRegistry.getInstance().addFileProvider(
 			new AssetsFileResolver(
 				getAssets()
@@ -113,7 +114,6 @@ public class EditorActivity extends BaseActivity implements NavigationView.OnNav
 		
 		GrammarRegistry.getInstance().loadGrammars("tm-language/languages.json");
 		EditorUtils.loadTMThemes();
-		
 		LSPManager.getInstance().startLSP("java");
 	}
 
@@ -127,12 +127,10 @@ public class EditorActivity extends BaseActivity implements NavigationView.OnNav
 					@Override
 					public boolean onMenuItemClick(MenuItem item) {
 						if (item.getItemId() == R.id.editor_removeTab) {
-							System.out.println("Removing tab in " + position);
 							tabAdapter.removeTab(position);
 						} else {
 							return false;
 						}
-
 						return true;
 					}
 				});

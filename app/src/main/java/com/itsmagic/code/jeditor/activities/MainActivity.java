@@ -41,6 +41,7 @@ public class MainActivity extends BaseActivity {
 			getResources().getStringArray(R.array.main_itsmagic_release_value)[0]
 		);
 		
+		// TODO: Disable button when JDK and JDTLS has not been setup
 		MaterialButton openProjectButton = findViewById(R.id.main_open_project_button);
 		openProjectButton.setOnClickListener(new View.OnClickListener() {
 			@Override

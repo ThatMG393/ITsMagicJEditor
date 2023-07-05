@@ -75,7 +75,7 @@ public class JavaLSPService extends BaseLSPService {
 	}
 	
 	public void initializeServer() throws Exception {
-		int clientPort = LSPManager.getInstance().getLanguageServers().get("java").getLSPPort();
+		int clientPort = LSPManager.getInstance().getLanguageServerModel("java").getLSPPort();
 		// Os.setenv("CLIENT_PORT", String.valueOf(clientPort + 1), true);
 		
 		if (serverSocket == null) {

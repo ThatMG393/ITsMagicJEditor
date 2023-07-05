@@ -36,37 +36,13 @@ public class LSPManager {
         this.activity = activity;
     }
 	
-	public void setCurrentProject(ProjectModel newProject) {
-		this.currentProject = newProject;
-	}
-	
-	public ProjectModel getCurrentProject() {
-		return this.currentProject;
-	}
-
-    public void startLSP(String language) {
-		languageServers.get(language).startLSPService();
-	}
-	
-	public void startLSPAll() {
-		languageServers.forEach((language, model) -> {
-			model.startLSPService();
-		});
-	}
-
-    public void stopLSP(String language) {
-		languageServers.get(language).stopLSPService();
-	}
-	
-	public ArrayMap<String, LanguageServerModel> getLanguageServers() {
-		return languageServers;
-	}
-	
+	/* Set currentProject first!
+	 * Use LSPManager.getInstance().setCurrentProject(ProjectModel)
+	 */
 	public void registerLSPs() {
 		if (currentProject == null) return;
 		
 		languageServers.put("java", new LanguageServerModel(
-			activity,
 			"java",
 			new JDTStreamProvider(
 				activity,
@@ -74,5 +50,31 @@ public class LSPManager {
 				getCurrentProject().projectPath
 			)
 		));
+	}
+
+    public void startLSP(String language) {
+		languageServers.get(language).startLSP();
+	}
+	
+	public void startAllLSP() {
+		languageServers.forEach((language, model) -> {
+			model.startLSP();
+		});
+	}
+
+    public void stopLSP(String language) {
+		languageServers.get(language).stopLSP();
+	}
+	
+	public void setCurrentProject(ProjectModel newProject) {
+		this.currentProject = newProject;
+	}
+	
+	public ProjectModel getCurrentProject() {
+		return this.currentProject;
+	}
+	
+	public LanguageServerModel getLanguageServerModel(String language) {
+		return languageServers.get(language);
 	}
 }

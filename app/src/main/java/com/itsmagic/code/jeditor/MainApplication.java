@@ -3,10 +3,13 @@ package com.itsmagic.code.jeditor;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.res.AssetManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.system.Os;
+import android.widget.Toast;
 
 import com.itsmagic.code.jeditor.utils.ProcessUtils;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
@@ -16,6 +19,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class MainApplication extends Application {
 	private static final int UNTAR_BUFFER_SIZE = 2048;
@@ -28,10 +33,25 @@ public class MainApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		System.out.println("App init!");
-		setupJDK17(getApplicationContext());
-		extractJDTLS(getApplicationContext());
-		setupEnvVariable(getApplicationContext());
+		Toast.makeText(getApplicationContext(), "Extracting JDK and JDTLS", Toast.LENGTH_SHORT).show();
+		
+		Handler mainThread = new Handler(Looper.getMainLooper());
+		CompletableFuture.runAsync(() -> {
+			setupJDK17(getApplicationContext());
+			extractJDTLS(getApplicationContext());
+			
+			boolean success = (isJDK17Installed && isJDTInstalled);
+			if (success) {
+				mainThread.postAtFrontOfQueue(() -> {
+					Toast.makeText(getApplicationContext(), "Successfully installed JDK and JDTLS", Toast.LENGTH_LONG).show();
+				});
+				setupEnvVariable(getApplicationContext());
+			} else {
+				mainThread.postAtFrontOfQueue(() -> {
+					Toast.makeText(getApplicationContext(), "Failed to installed JDK and JDTLS", Toast.LENGTH_LONG).show();
+				});
+			}
+		});
 	}
 
 	public void setupJDK17(Context context) {
