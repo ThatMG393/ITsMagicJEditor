@@ -1,6 +1,7 @@
 package com.itsmagic.code.jeditor.fragments.editor;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +21,12 @@ import com.itsmagic.code.jeditor.utils.SharedPreferenceUtils;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.lsp.editor.LspEditorManager;
+import io.github.rosemoe.sora.lsp.utils.URIUtils;
 import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.ContentIO;
 import io.github.rosemoe.sora.widget.CodeEditor;
 
+import java.io.File;
 import org.apache.commons.io.FilenameUtils;
 
 import java.util.concurrent.CompletableFuture;
@@ -32,10 +35,11 @@ public class EditorTabFragment extends Fragment {
 	public CodeEditor editor;
 	
 	private String textFileExt;
-	private String originalPath;
+	private File originalPath;
 	private DocumentFile textFile;
 	
 	public EditorTabFragment(Context context, String filePath) {
+		this.originalPath = new File(filePath);
 		this.textFileExt = FilenameUtils.getExtension(filePath);
 		this.textFile = DocumentFileCompat.fromFullPath(context, filePath, DocumentFileType.FILE);
 		initEditor(context);
@@ -62,7 +66,7 @@ public class EditorTabFragment extends Fragment {
 		super.onDestroy();
 		editor.release();
 		LspEditorManager.getOrCreateEditorManager(LSPManager.getInstance().getCurrentProject().projectPath)
-			.getEditor(textFile.getUri().toString())
+			.getEditor(URIUtils.fileToURI(originalPath).toString())
 			.close();
 	}
 	
@@ -94,7 +98,7 @@ public class EditorTabFragment extends Fragment {
 			public void onServerServiceConnected() {
 				LSPUtils.connectToLsp(
 					LSPUtils.createNewLspEditor(
-						originalPath,
+						URIUtils.fileToURI(originalPath).toString(),
 						LSPManager.getInstance().getLanguageServerModel("java").getServerDefinition(),
 						editor
 					)
