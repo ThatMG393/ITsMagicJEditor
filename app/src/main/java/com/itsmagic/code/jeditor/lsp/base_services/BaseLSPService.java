@@ -10,10 +10,10 @@ public abstract class BaseLSPService extends Service {
 
     protected abstract void startServer() throws Exception;
 	
-    public abstract void addServerListener(ILanguageServerCallback callback);
+    public abstract void addServerListener(LanguageServerListener callback);
 	
-	public interface ILanguageServerCallback {
-        public default void onStart() { }
-        public default void onShutdown() { }
+	public interface LanguageServerListener {
+		public default void onServerConnected() { }
+		public default void onServerDisconnected() { }
 	}
 }

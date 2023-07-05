@@ -10,9 +10,9 @@ android {
     defaultConfig {
         applicationId "com.itsmagic.code.jeditor"
         minSdk 26
-        targetSdk 33
+        targetSdk 28
         versionCode 526
-        versionName "ST.2023.06f7" // We need to match the ITsMagic app version
+        versionName "ST.2023.06f12" // We need to match the ITsMagic app version
     }
 
     buildTypes {
@@ -23,20 +23,8 @@ android {
     }
     
     compileOptions {
-		sourceCompatibility JavaVersion.VERSION_17
-		targetCompatibility JavaVersion.VERSION_17
-	}
-	
-	packagingOptions {
-		merge '/*.properties'
-		merge 'about_files/*'
-		merge '/*.xml'
-		merge 'META-INF/*'
-		merge 'META-INF/*/*'
-		merge 'OSGI-INF/*'
-		merge 'OSGI-INF/*/*'
-		
-		exclude '/lib/*'
+		sourceCompatibility JavaVersion.VERSION_11
+		targetCompatibility JavaVersion.VERSION_11
 	}
 }
 
@@ -55,8 +43,9 @@ dependencies {
 	
 	implementation 'org.eclipse.lsp4j:org.eclipse.lsp4j:0.21.0'
 	implementation 'org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc:0.21.0'
+	implementation 'org.tukaani:xz:1.9'
 	
-	// implementation 'org.eclipse.platform:org.eclipse.equinox.common:3.18.0'
+	// implementation 'com.termux.termux-app:terminal-view:0.118.0'
 	
 	implementation fileTree(dir: 'libs', include: '*.jar')
 }

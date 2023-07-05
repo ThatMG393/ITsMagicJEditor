@@ -17,6 +17,7 @@ import com.amrdeveloper.treeview.TreeViewAdapter;
 import com.amrdeveloper.treeview.TreeViewHolderFactory;
 import com.anggrayudi.storage.file.DocumentFileUtils;
 import com.itsmagic.code.jeditor.R;
+import com.itsmagic.code.jeditor.lsp.LSPManager;
 import com.itsmagic.code.jeditor.utils.UriUtils;
 
 import com.itsmagic.code.jeditor.viewholders.treeview.FileViewHolder;
@@ -31,8 +32,8 @@ public class EditorTreeViewFragment extends Fragment {
 	private RecyclerView recyclerView;
 	private TreeViewAdapter treeAdapter;
 	
-	public EditorTreeViewFragment(Uri projectPath) {
-		this.projectPath = projectPath;
+	public EditorTreeViewFragment() {
+		this.projectPath = Uri.parse(LSPManager.getInstance().getCurrentProject().projectPath + "%2FFiles");
 	}
 
 	@Override

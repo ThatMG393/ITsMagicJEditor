@@ -1,25 +1,23 @@
 package com.itsmagic.code.jeditor.lsp.java;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
-
+import android.os.Looper;
 import android.widget.Toast;
+
+import com.itsmagic.code.jeditor.MainApplication;
 import com.itsmagic.code.jeditor.lsp.LSPManager;
 import com.itsmagic.code.jeditor.lsp.base_services.BaseLSPBinder;
 import com.itsmagic.code.jeditor.lsp.base_services.BaseLSPService;
 import com.itsmagic.code.jeditor.utils.ThreadPlus;
-
-import org.eclipse.jdt.ls.core.internal.JavaClientConnection.JavaLanguageClient;
-import org.eclipse.jdt.ls.core.internal.handlers.JDTLanguageServer;
-import org.eclipse.jdt.ls.core.internal.preferences.PreferenceManager;
-import org.eclipse.lsp4j.jsonrpc.Launcher;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.Channels;
+import java.util.ArrayList;
 
 public class JavaLSPService extends BaseLSPService {
 	private JavaLSPBinder binder = new JavaLSPBinder();
@@ -27,13 +25,13 @@ public class JavaLSPService extends BaseLSPService {
 	private ThreadPlus serverThread;
 	private volatile boolean isServerRunning;
 	
+// LSP variables {
 	private AsynchronousServerSocketChannel serverSocket;
 	private AsynchronousSocketChannel serverClientSocket;
 	
-	private InputStream serverIS;
-	private OutputStream serverOS;
-	
-	private JDTLanguageServer jdtServer;
+	private InputStream clientOut;
+	private OutputStream clientIn;
+// }
 	
 	@Override
 	public void onCreate() {
@@ -45,13 +43,15 @@ public class JavaLSPService extends BaseLSPService {
 				startServer();	
 			} catch (Exception e) {
 				e.printStackTrace();
+				new Handler(Looper.getMainLooper()).postAtFrontOfQueue(() -> {
+					Toast.makeText(getApplicationContext(), "An error occurred!\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+				});
 			}
 		});
 	}
 	
 	@Override
 	public void startLSPServer() {
-		Toast.makeText(getApplicationContext(), "STARTING LSP", Toast.LENGTH_LONG).show();
 		serverThread.start();
 	}
 	
@@ -62,43 +62,35 @@ public class JavaLSPService extends BaseLSPService {
 	
 	@Override
 	protected void startServer() throws Exception {
-		System.out.println("listening");
 		serverClientSocket = serverSocket.accept().get();
-		System.out.println("yahooooooo");
 		
 		while (serverThread.isRunning()) {
 			if (!isServerRunning) {
-				serverIS = Channels.newInputStream(serverClientSocket);
-				serverOS = Channels.newOutputStream(serverClientSocket);
-				
-				Launcher serverLauncher = Launcher.createLauncher(jdtServer, JavaLanguageClient.class, serverIS, serverOS);
-				
-				jdtServer.connectClient((JavaLanguageClient) serverLauncher.getRemoteProxy());
-				serverLauncher.startListening();
-				
-				isServerRunning = true;
+				/*
+				LanguageServerWrapper wrapper = LSPManager.getInstance().getLanguageServers().get("java").getLanguageServerWrapper();
+				wrapper.start();
+				*/
 			}
 		}
 	}
 	
 	public void initializeServer() throws Exception {
-		int serverPort = LSPManager.getInstance().getLanguageServers().get("java").getLSPPort();
+		int clientPort = LSPManager.getInstance().getLanguageServers().get("java").getLSPPort();
+		// Os.setenv("CLIENT_PORT", String.valueOf(clientPort + 1), true);
 		
 		if (serverSocket == null) {
 			serverSocket = AsynchronousServerSocketChannel.open();
-			serverSocket.bind(new InetSocketAddress("localhost", serverPort));
-		}
-		
-		if (jdtServer == null) {
-			jdtServer = new JDTLanguageServer(
-				null,
-				new PreferenceManager()
-			);
+			serverSocket.bind(new InetSocketAddress("localhost", clientPort));
 		}
 	}
 	
+	private ArrayList<BaseLSPService.LanguageServerListener> listeners = new ArrayList<>();
 	@Override
-	public void addServerListener(BaseLSPService.ILanguageServerCallback callback) { }
+	public void addServerListener(BaseLSPService.LanguageServerListener listener) {
+		listeners.add(listener);
+		
+		if (isServerRunning()) { listener.onServerConnected(); }
+	}
 	
 	@Override
 	public boolean onUnbind(Intent intent) {

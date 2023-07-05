@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Application" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Activity.Main" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
@@ -11,4 +11,14 @@
         
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
     </style>
+	
+	<style name="Activity.Transparent" parent="Activity.Main">
+ 	   <item name="android:windowNoTitle">true</item>
+   	 <item name="android:windowBackground">@android:color/transparent</item>
+  	  <item name="android:colorBackgroundCacheHint">@null</item>
+    	<item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
+    	<item name="android:windowAnimationStyle">@android:style/Animation</item>
+	</style>
 </resources>

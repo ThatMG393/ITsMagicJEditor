@@ -62,10 +62,6 @@ public class TabEditorAdapter extends FragmentStateAdapter {
 					}
 				});
 		} else if (tabLayout.getTabCount() > 0 && tabLayout.getVisibility() == View.GONE) {
-			System.out.println("WGAT");
-			System.out.println("WGAT");
-			System.out.println("WGAT");
-			
 			tabLayout.setVisibility(View.VISIBLE);
 			tabLayout.animate()
 				.setDuration(200)

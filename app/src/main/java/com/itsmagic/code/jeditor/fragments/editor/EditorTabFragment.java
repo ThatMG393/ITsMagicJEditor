@@ -2,6 +2,7 @@ package com.itsmagic.code.jeditor.fragments.editor;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,34 +12,29 @@ import androidx.fragment.app.Fragment;
 
 import com.anggrayudi.storage.file.DocumentFileCompat;
 import com.anggrayudi.storage.file.DocumentFileType;
+import com.itsmagic.code.jeditor.activities.EditorActivity;
 import com.itsmagic.code.jeditor.lsp.LSPManager;
-import com.itsmagic.code.jeditor.models.LanguageServer;
+import com.itsmagic.code.jeditor.models.LanguageServerModel;
 import com.itsmagic.code.jeditor.utils.EditorUtils;
 import com.itsmagic.code.jeditor.utils.SharedPreferenceUtils;
 
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
-import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
-import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
-import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
 import io.github.rosemoe.sora.lsp.editor.LspEditor;
 import io.github.rosemoe.sora.lsp.editor.LspEditorManager;
-import io.github.rosemoe.sora.lsp.utils.URIUtils;
 import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.ContentIO;
 import io.github.rosemoe.sora.widget.CodeEditor;
 
-import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
 public class EditorTabFragment extends Fragment {
 	public CodeEditor editor;
 	
-	private String filePath;
+	private DocumentFile documentFile;
 	
 	public EditorTabFragment(Context context, String filePath) {
-		this.filePath = filePath;
-		editor = new CodeEditor(context);
+		this.documentFile = DocumentFileCompat.fromFullPath(context, filePath, DocumentFileType.FILE);
 		initEditor(context);
 	}
 
@@ -62,17 +58,14 @@ public class EditorTabFragment extends Fragment {
 	public void onDestroy() {
 		super.onDestroy();
 		editor.release();
+		LspEditorManager.getOrCreateEditorManager(LSPManager.getInstance().getCurrentProject().projectPath)
+			.getEditor(documentFile.getUri().toString())
+			.close();
 	}
 	
 	private final void initEditor(Context context) {
-		FileProviderRegistry.getInstance().addFileProvider(
-			new AssetsFileResolver(
-				context.getAssets()
-			)
-		);
+		editor = new CodeEditor(context);
 		
-		GrammarRegistry.getInstance().loadGrammars("tm-language/languages.json");
-		EditorUtils.loadTMThemes();
 		EditorUtils.ensureTMTheme(editor);
 		
 		ThemeRegistry.getInstance().setTheme(
@@ -81,23 +74,22 @@ public class EditorTabFragment extends Fragment {
 		
 		editor.setEditorLanguage(TextMateLanguage.create("source.java", true));
 		
-		LSPManager.getInstance().getLanguageServers().get("java").addListener(new LanguageServer.LanguagerServerCallback() {
+		LSPManager.getInstance().getLanguageServers().get("java").addListener(new LanguageServerModel.LanguageServerServiceListener() {
 			@Override
 			public void onServerServiceConnected() {
-				LspEditor lspEditor = LspEditorManager.getOrCreateEditorManager(filePath)
+				Log.d("LSP", "onServerServiceConnected()");
+				LspEditor lspEditor = LspEditorManager.getOrCreateEditorManager(LSPManager.getInstance().getCurrentProject().projectPath)
 					.createEditor(
-						URIUtils.fileToURI(new File(filePath)).toString(),
+						documentFile.getUri().toString(),
 						LSPManager.getInstance().getLanguageServers().get("java").getServerDefinition()
 					);
 					
-				lspEditor.setWrapperLanguage(editor.getEditorLanguage());
+				lspEditor.setWrapperLanguage(TextMateLanguage.create("source.java", true));
 				lspEditor.setEditor(editor);
-				
-				System.out.println("LETSA GO????");
 				
 				CompletableFuture.runAsync(() -> {
 					try {
-						System.out.println("JDT????");
+						Log.d("LSP", "Connecting to JDT with timeout!");
 						lspEditor.connectWithTimeout();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -106,13 +98,14 @@ public class EditorTabFragment extends Fragment {
 			}
 		});
 		
-		DocumentFile file = DocumentFileCompat.fromFullPath(context, filePath, DocumentFileType.FILE);
 		CompletableFuture.runAsync(() -> {
 			try {
-				Content text = ContentIO.createFrom(context.getContentResolver().openInputStream(file.getUri()));
-				editor.post(() -> {
-					editor.setText(text);
-				});
+				Content text = ContentIO.createFrom(
+					context.getContentResolver()
+							.openInputStream(documentFile.getUri())
+				);
+					
+				editor.post(() -> { editor.setText(text); });
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

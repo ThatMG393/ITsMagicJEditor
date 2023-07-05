@@ -1,15 +1,13 @@
 package com.itsmagic.code.jeditor.lsp;
 
-import android.content.ComponentName;
-import android.os.IBinder;
-import android.content.ServiceConnection;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.ArrayMap;
-import com.itsmagic.code.jeditor.lsp.base_services.BaseLSPService;
+
+import com.itsmagic.code.jeditor.lsp.java.JDTStreamProvider;
 import com.itsmagic.code.jeditor.lsp.java.JavaLSPService;
-import com.itsmagic.code.jeditor.models.LanguageServer;
-import java.util.ArrayList;
+import com.itsmagic.code.jeditor.models.LanguageServerModel;
+import com.itsmagic.code.jeditor.models.ProjectModel;
 
 public class LSPManager {
     private static volatile LSPManager INSTANCE;
@@ -31,19 +29,20 @@ public class LSPManager {
     }
 
     private final AppCompatActivity activity;
-	private final ArrayMap<String, LanguageServer> languageServers = new ArrayMap<String, LanguageServer>();
-
+	private final ArrayMap<String, LanguageServerModel> languageServers = new ArrayMap<String, LanguageServerModel>();
+	private ProjectModel currentProject;
+	
     private LSPManager(AppCompatActivity activity) {
         this.activity = activity;
-		
-		// Register LSP
-		languageServers.put("java", new LanguageServer(
-			activity.getApplicationContext(),
-			"java",
-			JavaLSPService.class,
-			17364
-		));
     }
+	
+	public void setCurrentProject(ProjectModel newProject) {
+		this.currentProject = newProject;
+	}
+	
+	public ProjectModel getCurrentProject() {
+		return this.currentProject;
+	}
 
     public void startLSP(String language) {
 		languageServers.get(language).startLSPService();
@@ -59,7 +58,21 @@ public class LSPManager {
 		languageServers.get(language).stopLSPService();
 	}
 	
-	public ArrayMap<String, LanguageServer> getLanguageServers() {
+	public ArrayMap<String, LanguageServerModel> getLanguageServers() {
 		return languageServers;
+	}
+	
+	public void registerLSPs() {
+		if (currentProject == null) return;
+		
+		languageServers.put("java", new LanguageServerModel(
+			activity,
+			"java",
+			new JDTStreamProvider(
+				activity,
+				activity.getFilesDir().getAbsolutePath() + "/jdt-language-server-1.23.0-202304271346",
+				getCurrentProject().projectPath
+			)
+		));
 	}
 }

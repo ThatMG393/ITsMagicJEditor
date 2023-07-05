@@ -21,7 +21,7 @@ public class MainSettingsFragment extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceBundle) {
 		super.onCreate(savedInstanceBundle);
-		setContentView(R.layout.fragment_base_settings);
+		setContentView(R.layout.activity_fragment_base);
 		setSupportActionBar(findViewById(R.id.fragment_base_toolbar));
 		
    	 getSupportFragmentManager()
