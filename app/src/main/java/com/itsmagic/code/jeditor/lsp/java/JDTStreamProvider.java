@@ -33,7 +33,7 @@ public class JDTStreamProvider implements StreamConnectionProvider {
             // "-noverify",
             "-Xmx969M",
             "-jar",
-        	jdtRoot + "/plugins/org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar",
+        	jdtRoot + "/plugins/org.eclipse.equinox.launcher_1.6.500.v20230622-2056.jar",
             "-configuration",
             jdtRoot + "/config_linux",
             "-data",

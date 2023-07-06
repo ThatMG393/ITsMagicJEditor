@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.itsmagic.code.jeditor.utils.ProcessUtils;
 
+import java.util.concurrent.Executors;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
@@ -33,14 +34,14 @@ public class MainApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Toast.makeText(getApplicationContext(), "Extracting JDK and JDTLS", Toast.LENGTH_SHORT).show();
 		
 		Handler mainThread = new Handler(Looper.getMainLooper());
-		CompletableFuture.runAsync(() -> {
-			setupJDK17(getApplicationContext());
-			extractJDTLS(getApplicationContext());
+		new Thread(() -> {
+			mainThread.postAtFrontOfQueue(() -> {
+				Toast.makeText(getApplicationContext(), "Extracting JDK and JDTLS", Toast.LENGTH_SHORT).show();
+			});
 			
-			boolean success = (isJDK17Installed && isJDTInstalled);
+			boolean success = (setupJDK17(getApplicationContext()) && extractJDTLS(getApplicationContext()));
 			if (success) {
 				mainThread.postAtFrontOfQueue(() -> {
 					Toast.makeText(getApplicationContext(), "Successfully installed JDK and JDTLS", Toast.LENGTH_LONG).show();
@@ -48,15 +49,15 @@ public class MainApplication extends Application {
 				setupEnvVariable(getApplicationContext());
 			} else {
 				mainThread.postAtFrontOfQueue(() -> {
-					Toast.makeText(getApplicationContext(), "Failed to installed JDK and JDTLS", Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "Failed to installed JDK or JDTLS", Toast.LENGTH_LONG).show();
 				});
 			}
-		});
+		}).start();
 	}
 
-	public void setupJDK17(Context context) {
+	public boolean setupJDK17(Context context) {
 		File f = new File(context.getFilesDir().getAbsolutePath(), "release");
-		if (f.exists()) { isJDK17Installed = true; return; }
+		if (f.exists()) { isJDK17Installed = true; return true; }
 		
 		System.out.println("Extracting JDK 17");
 		try {
@@ -70,29 +71,33 @@ public class MainApplication extends Application {
 				e.printStackTrace();
 			}
 			tarFileIS.close();
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 	
-	public void extractJDTLS(Context context) {
-		File f = new File(context.getFilesDir().getAbsolutePath(), "jdt-language-server-1.23.0-202304271346");
-		if (f.exists()) { isJDTInstalled = true; return; }
+	public boolean extractJDTLS(Context context) {
+		// TODO: Delete previous installation when upgrading
+		File f = new File(context.getFilesDir().getAbsolutePath(), "jdt-language-server-1.26.0-202307041703");
+		if (f.exists()) { isJDTInstalled = true; return true; }
 		
-		System.out.println("Extracting JDT 1.23.0");
+		System.out.println("Extracting JDT 1.26.0");
 		try {
-			InputStream tarFileIS = context.getAssets().open("lsp/jdtls-1.23.0.tar.xz");
+			InputStream tarFileIS = context.getAssets().open("lsp/jdtls-1.26.0.tar.xz");
 			try {
 				uncompressTarXZ(tarFileIS, context.getFilesDir());
 				isJDTInstalled = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 			tarFileIS.close();
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 
 	public void setupEnvVariable(Context context) {
@@ -121,7 +126,7 @@ public class MainApplication extends Application {
 
 		while (tarEntry != null) {
 			final String tarEntryName = tarEntry.getName();
-			System.out.println("Unpacking " + tarEntryName);
+			// System.out.println("Unpacking " + tarEntryName);
 
 			File destPath = new File(dest, tarEntry.getName());
 			File destParent = destPath.getParentFile();
@@ -143,9 +148,7 @@ public class MainApplication extends Application {
 
 				FileOutputStream os = new FileOutputStream(destPath);
 				IOUtils.copyLarge(tarIn, os, buffer);
-
-				if (destPath.getName().equals("java")) destPath.setExecutable(true);
-
+				
 				os.close();
 			}
 			tarEntry = tarIn.getNextTarEntry();

@@ -36,10 +36,10 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 		setSupportActionBar(findViewById(R.id.main_toolbar));
 		
-		String itsMagicDataPath = SharedPreferenceUtils.getInstance().getStringFallback(
+		String itsMagicDataPath = "Android/data/com.itsmagic.code.jeditor"; /* SharedPreferenceUtils.getInstance().getStringFallback(
 			"main_itsmagic_releaseType",
 			getResources().getStringArray(R.array.main_itsmagic_release_value)[0]
-		);
+		); */
 		
 		// TODO: Disable button when JDK and JDTLS has not been setup
 		MaterialButton openProjectButton = findViewById(R.id.main_open_project_button);
@@ -53,11 +53,14 @@ public class MainActivity extends BaseActivity {
 							final ArrayAdapter<String> projectsAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_item);
 							final ArrayList<ProjectModel> projectsList = new ArrayList<ProjectModel>();
 							
-							DocumentFile[] documentFiles = UriUtils.listFileTree(getApplicationContext(), Uri.parse(path.toString() + "%2Ffiles%2FITsMagic%2FProjects"));
-							
-							for (int i = 1; i < documentFiles.length; i++) {
+							System.out.println(path.toString());
+							DocumentFile[] documentFiles = UriUtils.listFileTree(getApplicationContext(), Uri.parse(path.toString() + "%2Ffiles"/* + "%2Ffiles%2FITsMagic%2FProjects" */));
+							System.out.println(documentFiles.length);
+								
+							for (int i = 0; i < documentFiles.length; i++) {
 								File projectDir = new File(DocumentFileUtils.getAbsolutePath(documentFiles[i], MainActivity.this));
-								if (projectDir.getName().toLowerCase().contains("_editor")) {
+								if (projectDir.getName().toLowerCase().contains("_editor")
+								|| !documentFiles[i].isDirectory()) {
                                     continue;
                                 }
 								
@@ -109,5 +112,7 @@ public class MainActivity extends BaseActivity {
 		SharedPreferenceUtils.initializeInstance(this);
 		StorageUtils.setupStorageHelper(this);
 		LSPManager.initializeInstance(this);
+		
+		getExternalFilesDir(""); // Creates Android/data folder if necessary
 	}
 }

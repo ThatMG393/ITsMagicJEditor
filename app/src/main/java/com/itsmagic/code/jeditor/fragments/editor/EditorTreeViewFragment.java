@@ -33,7 +33,7 @@ public class EditorTreeViewFragment extends Fragment {
 	private TreeViewAdapter treeAdapter;
 	
 	public EditorTreeViewFragment() {
-		this.projectPath = Uri.parse(LSPManager.getInstance().getCurrentProject().projectPath + "%2FFiles");
+		this.projectPath = Uri.parse(LSPManager.getInstance().getCurrentProject().projectPath/*+ "%2FFiles"*/);
 	}
 
 	@Override

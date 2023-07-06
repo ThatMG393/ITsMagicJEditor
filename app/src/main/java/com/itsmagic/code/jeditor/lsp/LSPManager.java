@@ -46,7 +46,7 @@ public class LSPManager {
 			"java",
 			new JDTStreamProvider(
 				activity,
-				activity.getFilesDir().getAbsolutePath() + "/jdt-language-server-1.23.0-202304271346",
+				activity.getFilesDir().getAbsolutePath() + "/jdt-language-server-1.26.0-202307041703",
 				getCurrentProject().projectPath
 			)
 		));

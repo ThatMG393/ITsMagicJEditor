@@ -1,5 +1,8 @@
 package com.itsmagic.code.jeditor.utils;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import com.itsmagic.code.jeditor.lsp.LSPManager;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
@@ -10,8 +13,13 @@ import io.github.rosemoe.sora.lsp.client.languageserver.wrapper.LanguageServerWr
 import io.github.rosemoe.sora.lsp.editor.LspEditor;
 import io.github.rosemoe.sora.lsp.editor.LspEditorManager;
 import io.github.rosemoe.sora.widget.CodeEditor;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
+import org.eclipse.lsp4j.DidChangeWorkspaceFoldersParams;
+import org.eclipse.lsp4j.WorkspaceFolder;
+import org.eclipse.lsp4j.WorkspaceFoldersChangeEvent;
 
 public class LSPUtils {
 	public static LanguageServerWrapper createNewServerWrapper(
@@ -49,9 +57,33 @@ public class LSPUtils {
 	}
 	
 	public static CompletableFuture<Boolean> connectToLsp(LspEditor lspEditor) {
+		Handler mainThread = new Handler(Looper.getMainLooper());
 		return CompletableFuture.supplyAsync(() -> {
 			try {
+				lspEditor.getEditor().setEditable(false);
 				lspEditor.connectWithTimeout();
+				lspEditor.getEditor().setEditable(true);
+				mainThread.postAtFrontOfQueue(() -> {
+					Toast.makeText(
+						lspEditor.getEditor().getContext(),
+						"connected to lsp!",
+						Toast.LENGTH_SHORT
+					).show();
+				});
+				
+				WorkspaceFoldersChangeEvent wfce = new WorkspaceFoldersChangeEvent();
+				wfce.setAdded(
+					Arrays.asList(
+						new WorkspaceFolder(LSPManager.getInstance().getCurrentProject().projectPath + "/java")
+					)
+				);
+					
+				DidChangeWorkspaceFoldersParams dwfp = new DidChangeWorkspaceFoldersParams();
+				dwfp.setEvent(wfce);
+
+				lspEditor.getRequestManager().didChangeWorkspaceFolders(
+					dwfp
+				);
 				return true;
 			} catch(TimeoutException | InterruptedException e) {
 				e.printStackTrace();

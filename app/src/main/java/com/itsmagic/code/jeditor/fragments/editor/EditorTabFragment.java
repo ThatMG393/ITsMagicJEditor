@@ -35,11 +35,9 @@ public class EditorTabFragment extends Fragment {
 	public CodeEditor editor;
 	
 	private String textFileExt;
-	private File originalPath;
 	private DocumentFile textFile;
 	
 	public EditorTabFragment(Context context, String filePath) {
-		this.originalPath = new File(filePath);
 		this.textFileExt = FilenameUtils.getExtension(filePath);
 		this.textFile = DocumentFileCompat.fromFullPath(context, filePath, DocumentFileType.FILE);
 		initEditor(context);
@@ -66,7 +64,7 @@ public class EditorTabFragment extends Fragment {
 		super.onDestroy();
 		editor.release();
 		LspEditorManager.getOrCreateEditorManager(LSPManager.getInstance().getCurrentProject().projectPath)
-			.getEditor(URIUtils.fileToURI(originalPath).toString())
+			.getEditor(textFile.getUri().toString())
 			.close();
 	}
 	
@@ -98,7 +96,7 @@ public class EditorTabFragment extends Fragment {
 			public void onServerServiceConnected() {
 				LSPUtils.connectToLsp(
 					LSPUtils.createNewLspEditor(
-						URIUtils.fileToURI(originalPath).toString(),
+						textFile.getUri().toString(),
 						LSPManager.getInstance().getLanguageServerModel("java").getServerDefinition(),
 						editor
 					)
